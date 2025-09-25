@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+
 //Step 1: Install Swiper: npm install swiper
 // Step 2: Import Swiper in your component
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -8,6 +9,11 @@ import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+
+// 1. Install Skeleton package:npm install react-loading-skeleton
+//2. Import it into your component(for skeleton)
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 //Step 3: Rewrite your component with Swiper
 
@@ -17,12 +23,19 @@ const HotCollections = () => {
   //  we need useState([]), to state our data
   const [hotCollection, setHotcollection] = useState([])
 
+  //3. Add a loading state (for Skeleton)
+  const [loading, setLoading] = useState(true);
+
   // we need async/await function to fetch our data
   async function fetchHotCollections() {
     const {data} = await axios.get(
       `https://us-central1-nft-cloud-functions.cloudfunctions.net/hotCollections`)
     console.log(data)
     setHotcollection(data)
+
+    setTimeout(() => {
+      setLoading(false); 
+    },3000);
   }
 
   // call the function in useEffect to mount the data
@@ -60,7 +73,31 @@ const HotCollections = () => {
               1000: { slidesPerView: 4 },
             }}
           >
-          {hotCollection
+               {/* 4. Render Skeletons while loading */}
+            {loading
+              ? new Array(4).fill(0).map((_, index) => (
+                  <SwiperSlide key={index}>
+                    <div className="nft_coll">
+                      <div className="nft_wrap">
+                        <Skeleton height={200} />
+                      </div>
+                      <div className="nft_coll_pp">
+                        <Skeleton circle width={50} height={50} />
+                      </div>
+                      <div className="nft_coll_info">
+                        <h4>
+                          <Skeleton width={`80%`} />
+                        </h4>
+                        <span>
+                          <Skeleton width={60} />
+                        </span>
+                      </div>
+                    </div>
+                  </SwiperSlide>
+                ))
+                :
+
+          hotCollection
           .map((h, index) => (
             <SwiperSlide key={index}>
               <div className="nft_coll">
@@ -83,9 +120,12 @@ const HotCollections = () => {
                 </div>
               </div>
             </SwiperSlide>
-          ))}
-          </Swiper>
-        </div>
+          ))
+
+        }
+        </Swiper>
+
+      </div>
       </div>
     </section>
   );
