@@ -30,7 +30,7 @@ const HotCollections = () => {
   async function fetchHotCollections() {
     const {data} = await axios.get(
       `https://us-central1-nft-cloud-functions.cloudfunctions.net/hotCollections`)
-    console.log(data)
+    // console.log(data)
     setHotcollection(data)
 
     setTimeout(() => {
@@ -99,7 +99,7 @@ const HotCollections = () => {
 
           hotCollection
           .map((h, index) => (
-            <SwiperSlide key={index}>
+            <SwiperSlide className="col-lg-3 col-md-6 col-sm-6 col-xs-12" key={index}>
               <div className="nft_coll">
                 <div className="nft_wrap">
                   <Link to="/item-details">
